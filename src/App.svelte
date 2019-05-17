@@ -1,4 +1,5 @@
 <script>
+
   import Bird from "./components/Bird.svelte";
   import World from "./components/World.svelte";
   import Score from "./components/Score.svelte";
@@ -20,7 +21,7 @@
     if (Math.abs(position.y - topTouchingPoint) < 10) {
       hasLost = true;
     }
-    if (Math.abs(position.y - bottomTouchingPoint + 20) < 10) {
+    if (Math.abs(position.y - bottomTouchingPoint) < 10) {
       hasLost = true;
     }
   }
@@ -41,15 +42,15 @@
   }
   requestAnimationFrame(animate);
   let isKeyDown = false;
-  function handleKeypress(event) {
-    if (event.which === SPACE && !isKeyDown) {
+  function handleDown(event) {
+    if ((event.which === SPACE && !isKeyDown) || event.type === 'touchstart') {
       isKeyDown = true;
       speed = -1;
       accelaration = 1;
     }
   }
-  function handleKeyup(event) {
-    if (event.which === SPACE) {
+  function handleUp(event) {
+    if ((event.which === SPACE) || event.type === 'touchend') {
       isKeyDown = false;
       speed = 1;
       accelaration = 1;
@@ -63,7 +64,11 @@
   }
 </style>
 
-<svelte:window on:keypress={handleKeypress} on:keyup={handleKeyup} />
+<svelte:window
+  on:keydown={handleDown}
+  on:touchstart={handleDown}
+  on:keyup={handleUp}
+  on:touchend={handleUp} />
 
 <audio
   loop
@@ -77,7 +82,8 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   x="0px"
   y="0px"
-  viewBox="0 0 {width} {height}">
+  viewBox="0 0 {width}
+  {height}">
   <World
     {hasLost}
     {width}
